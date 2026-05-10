@@ -1,0 +1,162 @@
+
+> wretched-wavelength@5.5.1 build
+> astro check && astro build && pagefind --site dist && cp -r dist/pagefind public/
+
+(node:40061) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+01:28:43 [content] Syncing content
+01:28:43 [content] Synced content
+01:28:43 [types] Generated 270ms
+01:28:43 [check] Getting diagnostics for Astro files in /Users/manas/Documents/Astro_papaer/wretched-wavelength...
+[96msrc/content.config.ts[0m:[93m22[0m:[93m17[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m22[0m       timezone: z.string().optional(),
+[7m  [0m [93m                ~[0m
+[96msrc/content.config.ts[0m:[93m21[0m:[93m21[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m21[0m       hideEditPost: z.boolean().optional(),
+[7m  [0m [93m                    ~[0m
+[96msrc/content.config.ts[0m:[93m20[0m:[93m21[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m20[0m       canonicalURL: z.string().optional(),
+[7m  [0m [93m                    ~[0m
+[96msrc/content.config.ts[0m:[93m19[0m:[93m20[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m19[0m       description: z.string(),
+[7m  [0m [93m                   ~[0m
+[96msrc/content.config.ts[0m:[93m18[0m:[93m27[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m18[0m       ogImage: image().or(z.string()).optional(),
+[7m  [0m [93m                          ~[0m
+[96msrc/content.config.ts[0m:[93m17[0m:[93m21[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m17[0m       tags: z.array(z.string()).default(["others"]),
+[7m  [0m [93m                    ~[0m
+[96msrc/content.config.ts[0m:[93m17[0m:[93m13[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m17[0m       tags: z.array(z.string()).default(["others"]),
+[7m  [0m [93m            ~[0m
+[96msrc/content.config.ts[0m:[93m16[0m:[93m14[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m16[0m       draft: z.boolean().optional(),
+[7m  [0m [93m             ~[0m
+[96msrc/content.config.ts[0m:[93m15[0m:[93m17[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m15[0m       featured: z.boolean().optional(),
+[7m  [0m [93m                ~[0m
+[96msrc/content.config.ts[0m:[93m14[0m:[93m14[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m14[0m       title: z.string(),
+[7m  [0m [93m             ~[0m
+[96msrc/content.config.ts[0m:[93m13[0m:[93m20[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m13[0m       modDatetime: z.date().optional().nullable(),
+[7m  [0m [93m                   ~[0m
+[96msrc/content.config.ts[0m:[93m12[0m:[93m20[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m12[0m       pubDatetime: z.date(),
+[7m  [0m [93m                   ~[0m
+[96msrc/content.config.ts[0m:[93m11[0m:[93m15[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m11[0m       author: z.string().default(SITE.author),
+[7m  [0m [93m              ~[0m
+[96msrc/content.config.ts[0m:[93m10[0m:[93m5[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m10[0m     z.object({
+[7m  [0m [93m    ~[0m
+[96msrc/content.config.ts[0m:[93m1[0m:[93m28[0m - [93mwarning[0m[90m ts(6385): [0m'z' is deprecated.
+
+[7m1[0m import { defineCollection, z } from "astro:content";
+[7m [0m [93m                           ~[0m
+
+Result (50 files): 
+- 0 errors
+- 0 warnings
+- 15 hints
+
+(node:40075) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+01:28:48 [content] Syncing content
+01:28:48 [content] Synced content
+01:28:48 [types] Generated 238ms
+01:28:48 [build] output: "static"
+01:28:48 [build] mode: "static"
+01:28:48 [build] directory: /Users/manas/Documents/Astro_papaer/wretched-wavelength/dist/
+01:28:48 [build] Collecting build info...
+01:28:48 [build] ✓ Completed in 250ms.
+01:28:48 [build] Building static entrypoints...
+01:28:49 [assets] Copying fonts (2 files)...
+01:28:49 [vite] ✓ built in 970ms
+01:28:49 [vite] ✓ built in 176ms
+01:28:49 [build] Rearranging server assets...
+
+ generating static routes 
+01:28:49   ├─ /404.html (+10ms) 
+01:28:49   ├─ /about/index.html (+3ms) 
+01:28:49   ├─ /archives/index.html (+6ms) 
+01:28:49   ├─ /og.png (+1.41s) 
+01:28:51   ├─ /posts/examples/tailwind-typography/index.png (+1.08s) 
+01:28:52   ├─ /posts/examples/how-do-i-develop-my-portfolio-and-blog/index.png (+1.05s) 
+01:28:53   ├─ /posts/examples/how-do-i-develop-my-terminal-portfolio-website-with-react/index.png (+1.23s) 
+01:28:54   ├─ /posts/index.html (+5ms) 
+01:28:54   ├─ /posts/2/index.html (+3ms) 
+01:28:54   ├─ /posts/astro-paper-2/index.html (+5ms) 
+01:28:54   ├─ /posts/astro-paper-v3/index.html (+7ms) 
+01:28:54   ├─ /posts/astro-paper-v4/index.html (+3ms) 
+01:28:54   ├─ /posts/astro-paper-v5/index.html (+3ms) 
+01:28:54   ├─ /posts/examples/tailwind-typography/index.html (+2ms) 
+01:28:54   ├─ /posts/examples/how-do-i-develop-my-portfolio-and-blog/index.html (+3ms) 
+01:28:54   ├─ /posts/examples/how-do-i-develop-my-terminal-portfolio-website-with-react/index.html (+2ms) 
+01:28:54   ├─ /robots.txt (+1ms) 
+01:28:54   ├─ /rss.xml (+32ms) 
+01:28:54   ├─ /search/index.html (+2ms) 
+01:28:54   ├─ /tags/astro/index.html (+2ms) 
+01:28:54   ├─ /tags/blog/index.html (+1ms) 
+01:28:54   ├─ /tags/contextapi/index.html (+1ms) 
+01:28:54   ├─ /tags/headlesscms/index.html (+1ms) 
+01:28:54   ├─ /tags/javascript/index.html (+1ms) 
+01:28:54   ├─ /tags/nextjs/index.html (+4ms) 
+01:28:54   ├─ /tags/reactjs/index.html (+1ms) 
+01:28:54   ├─ /tags/release/index.html (+1ms) 
+01:28:54   ├─ /tags/styled-components/index.html (+1ms) 
+01:28:54   ├─ /tags/tailwindcss/index.html (+1ms) 
+01:28:54   ├─ /tags/typescript/index.html (+1ms) 
+01:28:54   ├─ /tags/index.html (+2ms) 
+01:28:54   ├─ /index.html (+3ms) 
+01:28:54 ✓ Completed in 5.25s.
+
+ generating optimized images 
+01:28:54   ▶ /_astro/AstroPaper-v3.uaW8qzSG_Z2qcJ13.webp (reused cache entry) (+1ms) (1/21)
+01:28:54   ▶ /_astro/AstroPaper-v5.BKHVI1Ox_ZoOLh3.webp (reused cache entry) (+1ms) (2/21)
+01:28:54   ▶ /_astro/AstroPaper-v4.TylavUIc_Z12hrDX.webp (reused cache entry) (+1ms) (3/21)
+01:28:54   ▶ /_astro/AstroPaper-v3.uaW8qzSG_1PyOPh.webp (reused cache entry) (+1ms) (4/21)
+01:28:54   ▶ /_astro/AstroPaper-v5.BKHVI1Ox_Z1dfleE.webp (reused cache entry) (+1ms) (5/21)
+01:28:54   ▶ /_astro/AstroPaper-v4.TylavUIc_Z1PH1Bz.webp (reused cache entry) (+1ms) (6/21)
+01:28:54   ▶ /_astro/AstroPaper-v3.uaW8qzSG_2kDiE5.webp (reused cache entry) (+1ms) (7/21)
+01:28:54   ▶ /_astro/AstroPaper-v5.BKHVI1Ox_ZIaRpQ.webp (reused cache entry) (+1ms) (8/21)
+01:28:54   ▶ /_astro/AstroPaper-v4.TylavUIc_Z1lCxML.webp (reused cache entry) (+1ms) (9/21)
+01:28:54   ▶ /_astro/AstroPaper-v3.uaW8qzSG_Zq1FTU.webp (reused cache entry) (+3ms) (10/21)
+01:28:54   ▶ /_astro/AstroPaper-v4.TylavUIc_22XXK9.webp (reused cache entry) (+3ms) (11/21)
+01:28:54   ▶ /_astro/AstroPaper-v5.BKHVI1Ox_1ffq7R.webp (reused cache entry) (+3ms) (12/21)
+01:28:54   ▶ /_astro/AstroPaper-v3.uaW8qzSG_Z1es0ip.webp (reused cache entry) (+1ms) (13/21)
+01:28:54   ▶ /_astro/AstroPaper-v4.TylavUIc_1exEmE.webp (reused cache entry) (+0ms) (14/21)
+01:28:54   ▶ /_astro/AstroPaper-v5.BKHVI1Ox_qO6Jn.webp (reused cache entry) (+1ms) (15/21)
+01:28:54   ▶ /_astro/AstroPaper-v3.uaW8qzSG_Z2uotKE.webp (reused cache entry) (+1ms) (16/21)
+01:28:54   ▶ /_astro/AstroPaper-v4.TylavUIc_Z1nO5A.webp (reused cache entry) (+1ms) (17/21)
+01:28:54   ▶ /_astro/AstroPaper-v5.BKHVI1Ox_ZO7mHR.webp (reused cache entry) (+1ms) (18/21)
+01:28:54   ▶ /_astro/AstroPaper-v3.uaW8qzSG_1LOO7y.webp (reused cache entry) (+1ms) (19/21)
+01:28:54   ▶ /_astro/AstroPaper-v4.TylavUIc_ZOlE1j.webp (reused cache entry) (+1ms) (20/21)
+01:28:54   ▶ /_astro/AstroPaper-v5.BKHVI1Ox_Z1C5cDA.webp (reused cache entry) (+1ms) (21/21)
+01:28:54 ✓ Completed in 8ms.
+
+01:28:54 [build] ✓ Completed in 6.44s.
+01:28:54 [ERROR] [@astrojs/sitemap] An unhandled error occurred while running the "astro:build:done" hook
+Cannot read properties of undefined (reading 'reduce')
+  Location:
+    /Users/manas/Documents/Astro_papaer/wretched-wavelength/node_modules/.pnpm/@astrojs+sitemap@3.6.0/node_modules/@astrojs/sitemap/dist/index.js:56:36
+  Stack trace:
+    at astro:build:done (file:///Users/manas/Documents/Astro_papaer/wretched-wavelength/node_modules/.pnpm/@astrojs+sitemap@3.6.0/node_modules/@astrojs/sitemap/dist/index.js:56:36)
+    at withTakingALongTimeMsg (file:///Users/manas/Documents/Astro_papaer/wretched-wavelength/node_modules/.pnpm/astro@6.3.1_@types+node@17.0.45_jiti@2.6.1_lightningcss@1.30.2_rollup@4.60.3_yaml@2.7.1/node_modules/astro/dist/integrations/hooks.js:33:18)
+    at runHookBuildDone (file:///Users/manas/Documents/Astro_papaer/wretched-wavelength/node_modules/.pnpm/astro@6.3.1_@types+node@17.0.45_jiti@2.6.1_lightningcss@1.30.2_rollup@4.60.3_yaml@2.7.1/node_modules/astro/dist/integrations/hooks.js:454:11)
+    at async AstroBuilder.run (file:///Users/manas/Documents/Astro_papaer/wretched-wavelength/node_modules/.pnpm/astro@6.3.1_@types+node@17.0.45_jiti@2.6.1_lightningcss@1.30.2_rollup@4.60.3_yaml@2.7.1/node_modules/astro/dist/core/build/index.js:200:7)
+    at async build (file:///Users/manas/Documents/Astro_papaer/wretched-wavelength/node_modules/.pnpm/astro@6.3.1_@types+node@17.0.45_jiti@2.6.1_lightningcss@1.30.2_rollup@4.60.3_yaml@2.7.1/node_modules/astro/dist/cli/build/index.js:29:3)

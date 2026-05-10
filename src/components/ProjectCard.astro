@@ -1,0 +1,52 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { slugifyStr } from "@/utils/slugify";
+import { getPath } from "@/utils/getPath";
+import Datetime from "./Datetime.astro";
+import LinkButton from "./LinkButton.astro";
+
+type Props = {
+  variant?: "h2" | "h3";
+} & CollectionEntry<"projects">;
+
+const { variant: Heading = "h2", id, data, filePath } = Astro.props;
+
+const { title, description, github, stack, ...props } = data;
+---
+
+<li class="my-6">
+  <a
+    href={`/projects/${id}`}
+    class:list={[
+      "inline-block text-lg font-medium text-accent",
+      "decoration-dashed underline-offset-4 hover:underline",
+      "focus-visible:no-underline focus-visible:underline-offset-0",
+    ]}
+  >
+    <Heading
+      style={{ viewTransitionName: slugifyStr(title.replaceAll(".", "-")) }}
+    >
+      {title}
+    </Heading>
+  </a>
+  <Datetime {...props} />
+  <p class="mt-2">{description}</p>
+  {stack && stack.length > 0 && (
+    <div class="mt-2 flex flex-wrap gap-2">
+      {stack.map(tech => (
+        <span class="rounded bg-skin-card px-2 py-1 text-xs">{tech}</span>
+      ))}
+    </div>
+  )}
+  {github && (
+    <div class="mt-3">
+      <LinkButton
+        href={github}
+        class="text-sm underline decoration-dashed underline-offset-4 hover:text-accent"
+        target="_blank"
+      >
+        View on GitHub
+      </LinkButton>
+    </div>
+  )}
+</li>

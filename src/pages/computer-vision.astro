@@ -1,0 +1,27 @@
+---
+import { getCollection } from "astro:content";
+import Main from "@/layouts/Main.astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+import { SITE } from "@/config";
+
+const projects = await getCollection("projects", ({ data }) => data.category === "computer-vision");
+
+const sortedProjects = projects.sort(
+  (a, b) =>
+    Math.floor(new Date(b.data.pubDatetime).getTime() / 1000) -
+    Math.floor(new Date(a.data.pubDatetime).getTime() / 1000)
+);
+---
+
+<Layout title={`Computer Vision Projects | ${SITE.title}`}>
+  <Header />
+  <Main pageTitle="Computer Vision" pageDesc="My projects in AI, Deep Learning, and Computer Vision.">
+    <ul>
+      {sortedProjects.map(data => <ProjectCard {...data} />)}
+    </ul>
+  </Main>
+  <Footer />
+</Layout>
