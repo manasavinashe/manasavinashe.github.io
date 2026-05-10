@@ -43,11 +43,41 @@ The dataset is a panel with 2,167 stocks and daily observations. The 22 indicato
 - **Volume** — OBV, Accumulation Distribution Index, Chaikin Money Flow, Ease of Movement, raw volume
 - **Composite** — Ichimoku cloud
 
-Every raw indicator is transformed to its **cross-sectional percentile rank** centred at zero (`cs_rank_pct ∈ [−0.5, 0.5]`). This makes features invariant to monotone transformations, collapses outliers, and puts all 22 signals on a common scale without separate standardisation. The learning target is the **cross-sectionally demeaned next-day return**, which strips the daily market factor and focuses the model on the stock-vs-stock dispersion a dollar-neutral portfolio actually harvests.
+Every raw indicator is transformed to its **cross-sectional percentile rank** centred at zero (`cs_rank_pct ∈ [−0.5, 0.5]`). This makes features invariant to monotone transforms, collapses outliers, and puts all 22 signals on a common scale without separate standardisation.
+
+![Feature distributions before and after the rank transform](./images/eda_distributions.png)
+
+The learning target is the **cross-sectionally demeaned next-day return**, which strips the daily market factor and focuses the model on the stock-vs-stock dispersion a dollar-neutral portfolio actually harvests.
+
+### Why Nonlinearity Matters
+
+The decile plots below show the mean next-day return for each feature decile. Several indicators (Aroon, Know Sure Thing, MACD, trend\_1\_3, TRIX) show non-monotone shapes — a pattern a linear model cannot fit but a tree ensemble can.
+
+![Mean next-day return by feature-rank decile](./images/eda_decile_plots.png)
+
+### Feature Correlation Structure
+
+Several momentum and volatility transforms are near-collinear, which degrades linear estimators and motivates either regularisation or nonlinearity.
+
+![Pooled feature correlation matrix](./images/eda_corr_pooled.png)
+
+![Average cross-sectional feature correlation](./images/eda_corr_cs.png)
+
+Hierarchical clustering reveals that data-driven groupings diverge from the naive taxonomy — for example, Ichimoku clusters with the volatility group rather than the trend group.
+
+![Hierarchical clustering of features](./images/eda_corr_cluster.png)
+
+### Signal Stability Over Time
+
+The rolling 252-day IC for the strongest univariate signals shows large regime-dependent swings, motivating walk-forward evaluation rather than standard k-fold cross-validation.
+
+![Rolling 252-day Information Coefficient for top features](./images/eda_rolling_ic.png)
 
 ### Leakage-Free Evaluation
 
 Standard k-fold is invalid on financial panel data because temporally close observations share label information. I adopted a **walk-forward split with a 5-day embargo** at each boundary (following López de Prado 2018):
+
+![Walk-forward split timeline](./images/splits_timeline.png)
 
 | Fold | Window | Days |
 |---|---|---|
@@ -63,7 +93,9 @@ Model selection was done entirely on the validation fold. The test fold was touc
 
 **Ridge Regression.** A regularised linear model with L2 penalty, sweeping α ∈ {0.1, 1, 10, 100, 1000, 10000} and selecting by mean validation IC.
 
-**LightGBM.** A gradient boosted decision tree ensemble. Five configurations were tuned over `num_leaves ∈ {15, 31, 63}`, `learning_rate ∈ {0.02, 0.05}`, and `min_child_samples ∈ {500, 2000}`, with early stopping evaluated by validation IC rather than MSE (since MSE is only a proxy for the rank-based objective).
+![Ridge validation IC across the regularisation grid](./images/ridge_val_tuning.png)
+
+**LightGBM.** A gradient boosted decision tree ensemble. Five configurations were tuned over `num_leaves ∈ {15, 31, 63}`, `learning_rate ∈ {0.02, 0.05}`, and `min_child_samples ∈ {500, 2000}`, with early stopping evaluated by validation IC rather than MSE.
 
 ### Portfolio Construction
 
@@ -79,12 +111,30 @@ Model scores are converted to portfolio weights through a fully deterministic, m
 | Ridge (α = 10000) | 0.0043 | 0.66 | 0.45 | −0.05 | 76.7% |
 | LightGBM (cfg 2) | 0.0108 | 2.35 | 0.82 | **0.59** | 96.1% |
 
+### Cumulative P&L
+
+Ridge drifts sideways and finishes slightly negative on the test fold — a direct consequence of losing 60% of its validation IC to regime shift.
+
+![Ridge cumulative net P&L on the 2017–2019 test fold](./images/ridge_pnl_test.png)
+
+LightGBM tracks a positive drift but with visibly larger day-to-day swings, reflecting its higher turnover.
+
+![LightGBM cumulative net P&L on the 2017–2019 test fold](./images/lgbm_pnl_test.png)
+
+### What Each Model Learned
+
+Ridge weights are dominated by short-term reversal and volume features, but the overall magnitude is small — consistent with the flat validation IC across the entire α grid.
+
+![Learned Ridge coefficients](./images/ridge_coefficients.png)
+
+LightGBM concentrates gain-based importance on volatility (20/60-day) and volume features, consistent with the univariate EDA and with the dominance of momentum and liquidity signals in the broader empirical finance literature.
+
+![LightGBM feature importance (gain)](./images/lgbm_importance.png)
+
 ### Key Findings
 
-**LightGBM genuinely extracts more signal.** On the validation fold it achieves IC 0.0213 and ICIR 4.08 — roughly 2× and 2.6× the best Ridge fit. Five of the 22 features (Aroon, Know Sure Thing, MACD, trend\_1\_3, TRIX) show non-monotone return decile shapes that a linear model cannot capture but a tree ensemble can. Volatility (20/60-day) and volume features dominate LightGBM's gain-based importance, consistent with the broader empirical finance literature.
+**LightGBM genuinely extracts more signal.** On the validation fold it achieves IC 0.0213 and ICIR 4.08 — roughly 2× and 2.6× the best Ridge fit. Five of the 22 features show non-monotone return decile shapes that a linear model cannot capture but a tree ensemble can.
 
-**Ridge does not generalise.** After rank normalisation the squared loss problem is already well-conditioned, so the L2 penalty has little effect. IC drops 60% from validation to test, and net Sharpe is slightly negative — a textbook example of the non-stationarity hazard.
+**Ridge does not generalise.** After rank normalisation the squared loss is already well-conditioned, so the L2 penalty has little effect. IC drops 60% from validation to test and net Sharpe turns slightly negative — a textbook example of the non-stationarity hazard.
 
-**Stronger signal ≠ stronger net P&L.** LightGBM's gross Sharpe (0.82) is essentially tied with the baseline (0.84), and its net advantage (0.59 vs 0.54) is within noise. The mechanism is turnover: LightGBM rotates the portfolio at 96.1% of book per day — 2.9× the baseline — and 1 bp transaction costs consume most of the gross edge. This is the classic ML-in-finance failure mode: higher predictive power paired with higher churn.
-
-**The binding constraint is validation-to-test decay.** Ridge loses 60% of its validation IC on the test fold; LightGBM loses 49%. The rule-based baseline, which is not fit to any particular period, degrades far less. This motivates future directions: turnover-penalised training losses, stronger regularisation, or rolling retraining schedules.
+**Stronger signal ≠ stronger net P&L.** LightGBM's gross Sharpe (0.82) is essentially tied with the baseline (0.84), and its net advantage (0.59 vs 0.54) is within noise. The mechanism is turnover: LightGBM rotates the portfolio at 96.1% of book per day — 2.9× the baseline — and 1 bp transaction costs consume most of the gross edge. Signal strength is necessary but not sufficient; controlling turnover and handling non-stationarity are the next binding constraints.
