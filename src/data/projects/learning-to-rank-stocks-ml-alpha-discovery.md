@@ -45,7 +45,7 @@ The dataset is a panel with 2,167 stocks and daily observations. The 22 indicato
 
 Every raw indicator is transformed to its **cross-sectional percentile rank** centred at zero (`cs_rank_pct ∈ [−0.5, 0.5]`). This makes features invariant to monotone transforms, collapses outliers, and puts all 22 signals on a common scale without separate standardisation.
 
-![Feature distributions before and after the rank transform](./images/eda_distributions.png)
+![Feature distributions before and after the rank transform](./images/stock-ranking/eda_distributions.png)
 
 The learning target is the **cross-sectionally demeaned next-day return**, which strips the daily market factor and focuses the model on the stock-vs-stock dispersion a dollar-neutral portfolio actually harvests.
 
@@ -53,31 +53,31 @@ The learning target is the **cross-sectionally demeaned next-day return**, which
 
 The decile plots below show the mean next-day return for each feature decile. Several indicators (Aroon, Know Sure Thing, MACD, trend\_1\_3, TRIX) show non-monotone shapes — a pattern a linear model cannot fit but a tree ensemble can.
 
-![Mean next-day return by feature-rank decile](./images/eda_decile_plots.png)
+![Mean next-day return by feature-rank decile](./images/stock-ranking/eda_decile_plots.png)
 
 ### Feature Correlation Structure
 
 Several momentum and volatility transforms are near-collinear, which degrades linear estimators and motivates either regularisation or nonlinearity.
 
-![Pooled feature correlation matrix](./images/eda_corr_pooled.png)
+![Pooled feature correlation matrix](./images/stock-ranking/eda_corr_pooled.png)
 
-![Average cross-sectional feature correlation](./images/eda_corr_cs.png)
+![Average cross-sectional feature correlation](./images/stock-ranking/eda_corr_cs.png)
 
 Hierarchical clustering reveals that data-driven groupings diverge from the naive taxonomy — for example, Ichimoku clusters with the volatility group rather than the trend group.
 
-![Hierarchical clustering of features](./images/eda_corr_cluster.png)
+![Hierarchical clustering of features](./images/stock-ranking/eda_corr_cluster.png)
 
 ### Signal Stability Over Time
 
 The rolling 252-day IC for the strongest univariate signals shows large regime-dependent swings, motivating walk-forward evaluation rather than standard k-fold cross-validation.
 
-![Rolling 252-day Information Coefficient for top features](./images/eda_rolling_ic.png)
+![Rolling 252-day Information Coefficient for top features](./images/stock-ranking/eda_rolling_ic.png)
 
 ### Leakage-Free Evaluation
 
 Standard k-fold is invalid on financial panel data because temporally close observations share label information. I adopted a **walk-forward split with a 5-day embargo** at each boundary (following López de Prado 2018):
 
-![Walk-forward split timeline](./images/splits_timeline.png)
+![Walk-forward split timeline](./images/stock-ranking/splits_timeline.png)
 
 | Fold | Window | Days |
 |---|---|---|
@@ -93,7 +93,7 @@ Model selection was done entirely on the validation fold. The test fold was touc
 
 **Ridge Regression.** A regularised linear model with L2 penalty, sweeping α ∈ {0.1, 1, 10, 100, 1000, 10000} and selecting by mean validation IC.
 
-![Ridge validation IC across the regularisation grid](./images/ridge_val_tuning.png)
+![Ridge validation IC across the regularisation grid](./images/stock-ranking/ridge_val_tuning.png)
 
 **LightGBM.** A gradient boosted decision tree ensemble. Five configurations were tuned over `num_leaves ∈ {15, 31, 63}`, `learning_rate ∈ {0.02, 0.05}`, and `min_child_samples ∈ {500, 2000}`, with early stopping evaluated by validation IC rather than MSE.
 
@@ -115,21 +115,21 @@ Model scores are converted to portfolio weights through a fully deterministic, m
 
 Ridge drifts sideways and finishes slightly negative on the test fold — a direct consequence of losing 60% of its validation IC to regime shift.
 
-![Ridge cumulative net P&L on the 2017–2019 test fold](./images/ridge_pnl_test.png)
+![Ridge cumulative net P&L on the 2017–2019 test fold](./images/stock-ranking/ridge_pnl_test.png)
 
 LightGBM tracks a positive drift but with visibly larger day-to-day swings, reflecting its higher turnover.
 
-![LightGBM cumulative net P&L on the 2017–2019 test fold](./images/lgbm_pnl_test.png)
+![LightGBM cumulative net P&L on the 2017–2019 test fold](./images/stock-ranking/lgbm_pnl_test.png)
 
 ### What Each Model Learned
 
 Ridge weights are dominated by short-term reversal and volume features, but the overall magnitude is small — consistent with the flat validation IC across the entire α grid.
 
-![Learned Ridge coefficients](./images/ridge_coefficients.png)
+![Learned Ridge coefficients](./images/stock-ranking/ridge_coefficients.png)
 
 LightGBM concentrates gain-based importance on volatility (20/60-day) and volume features, consistent with the univariate EDA and with the dominance of momentum and liquidity signals in the broader empirical finance literature.
 
-![LightGBM feature importance (gain)](./images/lgbm_importance.png)
+![LightGBM feature importance (gain)](./images/stock-ranking/lgbm_importance.png)
 
 ### Key Findings
 
