@@ -10,13 +10,14 @@ type Props = {
 } & CollectionEntry<"projects">;
 
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
+const base = import.meta.env.BASE_URL;
 
 const { title, description, github, stack, ...props } = data;
 ---
 
 <li class="my-6">
   <a
-    href={`/projects/${id}`}
+    href={`${base}projects/${id}`}
     class:list={[
       "inline-block text-lg font-medium text-accent",
       "decoration-dashed underline-offset-4 hover:underline",
