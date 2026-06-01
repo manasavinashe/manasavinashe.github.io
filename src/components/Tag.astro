@@ -8,7 +8,7 @@ type Props = {
 };
 
 const { tag, tagName, size = "lg" } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 ---
 
 <li>

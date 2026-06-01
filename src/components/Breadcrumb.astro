@@ -1,5 +1,5 @@
 ---
-const base = import.meta.env.BASE_URL;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
 
 // Strip base prefix before processing breadcrumbs
 const currentUrlPath = Astro.url.pathname
