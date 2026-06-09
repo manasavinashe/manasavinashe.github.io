@@ -1,7 +1,7 @@
 ---
 title: "Reconstructing Maps from Shuffled Patches, then Asking a Vision-Language Model About Them"
 description: "An end-to-end geospatial pipeline that reassembles a large map from shuffled, randomly-rotated, overlapping patches using a confidence-first BFS with per-edge pixel matching, then answers multiple-choice questions about the reconstruction with a quantized Qwen2.5-VL 7B model under a scoring scheme that penalizes wrong answers."
-category: "cv"
+category: "computer-vision"
 pubDatetime: 2026-06-09T12:00:00Z
 github: "https://github.com/manasavinashe"
 stack:
