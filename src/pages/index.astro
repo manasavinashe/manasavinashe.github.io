@@ -3,15 +3,10 @@ import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
-import Socials from "@/components/Socials.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
-import { SOCIALS } from "@/constants";
 
-const projects = await getCollection("projects");
-const financeProject = projects.find(({ data }) => data.category === "finance" && data.featured) || projects.find(({ data }) => data.category === "finance");
-const cvProject = projects.find(({ data }) => data.category === "computer-vision" && data.featured) || projects.find(({ data }) => data.category === "computer-vision");
-const featuredProjects = [financeProject, cvProject].filter(
-  (project): project is any => project !== undefined
+const projects = (await getCollection("projects")).sort(
+  (a, b) => b.data.pubDatetime.valueOf() - a.data.pubDatetime.valueOf()
 );
 ---
 
@@ -22,25 +17,14 @@ const featuredProjects = [financeProject, cvProject].filter(
       <h1 class="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">
         Hello! नमस्ते! こんにちは! Guten Tag!
       </h1>
-      {
-        SOCIALS.length > 0 && (
-          <div class="mt-4 flex max-sm:flex-col sm:items-center">
-            <div class="me-2 mb-1 whitespace-nowrap sm:mb-0">Social Links:</div>
-            <Socials />
-          </div>
-        )
-      }
     </section>
 
     {
-      featuredProjects.length > 0 && (
-        <section
-          id="featured-projects"
-          class="pt-12 pb-6 border-b border-border"
-        >
-          <h2 class="text-2xl font-semibold tracking-wide">Featured Projects</h2>
+      projects.length > 0 && (
+        <section id="projects" class="pt-12 pb-6 border-b border-border">
+          <h2 class="text-2xl font-semibold tracking-wide">Projects</h2>
           <ul>
-            {featuredProjects.map(data => (
+            {projects.map(data => (
               <ProjectCard variant="h3" {...data} />
             ))}
           </ul>

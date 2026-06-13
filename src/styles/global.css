@@ -1,30 +1,36 @@
 @import "tailwindcss";
+@import "./tokens.css";
 @import "./typography.css";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* Color roles wired to the design-spec palette (see tokens.css / color.md).
+   --muted maps to the spec's "surface" (card / code / hover fill). */
 :root,
 html[data-theme="light"] {
   --background: #fdfdfd;
   --foreground: #282728;
   --accent: #006cac;
-  --muted: #e6e6e6;
-  --border: #ece9e9;
+  --accent-hover: #00567f;
+  --muted: #f4f4f3;
+  --border: #e4e3e1;
 }
 
 html[data-theme="dark"] {
-  --background: #212737;
-  --foreground: #eaedf3;
-  --accent: #ff6b01;
-  --muted: #343f60;
-  --border: #ab4b08;
+  --background: #1c2030;
+  --foreground: #e9ecf3;
+  --accent: #6cb6ff;
+  --accent-hover: #93cbff;
+  --muted: #262b3d;
+  --border: #363c52;
 }
 
 @theme inline {
-  --font-app: var(--font-google-sans-code);
+  --font-app: var(--font-ibm-plex-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
   --color-muted: var(--muted);
   --color-border: var(--border);
 }
@@ -60,7 +66,7 @@ html[data-theme="dark"] {
 }
 
 .active-nav {
-  @apply underline decoration-wavy decoration-2 underline-offset-8;
+  @apply underline underline-offset-4;
 }
 
 /* Source: https://piccalil.li/blog/a-more-modern-css-reset/ */

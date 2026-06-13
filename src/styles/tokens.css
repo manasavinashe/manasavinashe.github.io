@@ -1,0 +1,81 @@
+/* ============================================================
+   Design tokens — manasavinashe.dev
+   Monospace, content-first blog. Single source of truth.
+
+   USAGE (Astro): import once in your global stylesheet, e.g.
+     src/styles/global.css  ->  @import "./tokens.css";
+   Then reference variables everywhere (var(--color-accent), etc).
+
+   THE SIZE REDUCTION: the mono felt too big. The whole scale is
+   pulled down by setting the root to 15px (html font-size: 93.75%)
+   and tightening the heading steps below. Everything is in rem,
+   so it scales as one system — change the root to rescale all.
+   ============================================================ */
+
+:root {
+  /* ---- Color · Light (measured from the live site) ---- */
+  --color-bg: #fdfdfd;          /* page background — near-white neutral */
+  --color-surface: #f4f4f3;     /* cards, code blocks, hover fills */
+  --color-border: #e4e3e1;      /* hairline rules & dividers (1px) */
+  --color-text: #282728;        /* primary ink */
+  --color-text-muted: #6b6b6b;  /* dates, breadcrumbs, captions */
+  --color-accent: #006cac;      /* links, active nav, focus */
+  --color-accent-hover: #00567f;
+
+  /* ---- Typography ---- */
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo,
+               "Cascadia Mono", Consolas, monospace;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+
+  /* Reduced type scale. px shown for reference at root = 15px. */
+  --fs-xs:   0.80rem;   /* 12px   — tags, fine print */
+  --fs-sm:   0.867rem;  /* 13px   — dates, meta, captions */
+  --fs-base: 1rem;      /* 15px   — body copy */
+  --fs-md:   1.133rem;  /* 17px   — lead text, site title */
+  --fs-lg:   1.40rem;   /* 21px   — h3 / section headings */
+  --fs-xl:   1.80rem;   /* 27px   — h2 / post titles */
+  --fs-2xl:  2.30rem;   /* 34.5px — h1 / display */
+
+  --lh-tight: 1.18;     /* large headings */
+  --lh-snug: 1.40;      /* sub-headings */
+  --lh-body: 1.70;      /* body copy */
+  --tracking-tight: -0.01em; /* applied to fs-lg and above */
+
+  /* ---- Spacing · 4px base ---- */
+  --space-1: 0.25rem;   /* 4px  */
+  --space-2: 0.5rem;    /* 8px  */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+
+  /* ---- Layout ---- */
+  --container: 48rem;        /* main reading column max-width */
+  --container-pad: 1.25rem;  /* horizontal gutter */
+  --radius: 4px;             /* the only rounding — buttons, cards, code */
+  --hairline: 1px;
+}
+
+/* ---- Color · Dark ----
+   INFERRED from the light palette + a neutral dark navy. Only light
+   mode was captured, so VERIFY/REPLACE these against the real values
+   in your repo (e.g. an existing :root.dark or [data-theme="dark"]
+   block, or your Tailwind/AstroPaper color config) before shipping. */
+html[data-theme="dark"],
+:root.dark {
+  --color-bg: #1c2030;
+  --color-surface: #262b3d;
+  --color-border: #363c52;
+  --color-text: #e9ecf3;
+  --color-text-muted: #969eb2;
+  --color-accent: #6cb6ff;       /* lightened blue for contrast on dark */
+  --color-accent-hover: #93cbff;
+}
+
+/* ---- Root size: the single knob for overall scale ----
+   Put this on html in your base/reset. Was effectively 16px. */
+html { font-size: 93.75%; } /* = 15px */
