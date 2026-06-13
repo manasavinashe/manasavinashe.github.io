@@ -1,8 +1,8 @@
 export const SITE = {
-  website: "https://manasavinashe.github.io/wretched-wavelength/",
+  website: "https://manasavinashe.github.io/",
   author: "Manas Avinashe",
   profile: "https://github.com/manasavinashe",
-  desc: "Personal projects in finance and computer vision.",
+  desc: "Manas Avinashe — ML engineer and quantitative finance researcher. Projects in computer vision, deep learning, geoinformatics, and systematic trading.",
   title: "Manas Avinashe",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,

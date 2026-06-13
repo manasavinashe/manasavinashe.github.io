@@ -3,7 +3,7 @@ title: "Reconstructing Maps from Shuffled Patches, then Asking a Vision-Language
 description: "An end-to-end geospatial pipeline that reassembles a large map from shuffled, randomly-rotated, overlapping patches using a confidence-first BFS with per-edge pixel matching, then answers multiple-choice questions about the reconstruction with a quantized Qwen2.5-VL 7B model under a scoring scheme that penalizes wrong answers."
 category: "computer-vision"
 pubDatetime: 2026-06-09T12:00:00Z
-github: "https://github.com/manasavinashe/map_reconstruction_visual_question_answering"
+github: "https://github.com/manasavinashe"
 stack:
   - "Python"
   - "PyTorch"
@@ -17,7 +17,7 @@ featured: true
 
 ## Overview
 
-This project tackles a two-part geospatial challenge from a course competition (GNR 638, IIT Bombay). You are handed a folder of image patches that were cut out of one large aerial/street map — but the patches are **shuffled out of order, each rotated by a random multiple of 90°, and they overlap their neighbours by an unknown number of pixels**. The only fixed point is `patch_0`, which is guaranteed to be the top-left corner.
+This was my last project from the very rigorous Deep learning course (GNR 638- IIT Bombay) taken by CMinds Prof. Biplab Baneerjee. we were handed a folder of image patches that were cut out of one large aerial/street map , **shuffled out of order, each rotated by a random multiple of 90°, and they overlap their neighbours by an unknown number of pixels**. The only fixed point is `patch_0`, which is guaranteed to be the top-left corner.
 
 The task has two stages:
 
@@ -25,8 +25,6 @@ The task has two stages:
 2. **Visual Question Answering (VQA)** — feed the reconstructed map to a vision-language model and answer multiple-choice questions about it ("which water body is visible?", "which dam is to the north?").
 
 What makes it interesting is the second-order constraint: the answers are **scored with negative marking**, so a confident wrong answer costs you, and the system has to know when to *abstain* rather than guess. The pipeline runs fully **offline at inference** on a 48 GB GPU, within a one-hour budget.
-
-> **Code:** the full pipeline — stitching, VQA, and the cross-platform backend routing — is on GitHub at [**manasavinashe/map_reconstruction_visual_question_answering**](https://github.com/manasavinashe/map_reconstruction_visual_question_answering), with sample data so it runs out of the box.
 
 ## The Problem
 
@@ -41,7 +39,7 @@ The scoring rule is the part that shapes the whole design:
 | Skipped (answer = `5`) | **0** |
 | Hallucinated value (anything not 1–5) | **−1** |
 
-This turns the VQA stage from "maximise accuracy" into "maximise expected score" — and it makes *never emitting an invalid token* a hard safety requirement, not a nicety.
+This turns the VQA stage from "maximise accuracy" into "maximise expected score" — and it makes *never emitting an invalid token* a hard safety requirement
 
 The single insight that the entire reconstruction leans on:
 
@@ -127,15 +125,12 @@ The reconstruction is faithful enough that fine detail survives — road network
 
 For the VQA stage I use **Qwen2.5-VL-7B-Instruct**, a 7-billion-parameter vision-language model, **zero-shot** — there is no training data in this competition, and a strong instruction-tuned VLM handles open-ended map questions out of the box. The whole reconstructed map is passed as a single image alongside each question.
 
-The pipeline **auto-selects its inference backend and precision** from the machine it runs on — the *same* `inference.py` serves an NVIDIA grading server, a Windows/Linux dev box, and an Apple-Silicon laptop:
+The loader picks precision based on the GPU it finds at runtime:
 
-- **NVIDIA, ≥ 20 GB VRAM** (the L40s grading server) → 🤗 Transformers, **fp16** (~17 GB).
-- **NVIDIA, smaller GPU** → Transformers, **4-bit NF4** via bitsandbytes (~6 GB), with double-quant and an fp16 compute dtype.
-- **Apple Silicon (macOS)** → **Apple MLX**, 4-bit (~4.3 GB) — bitsandbytes is CUDA-only, so the Mac takes a different engine entirely.
+- **≥ 20 GB VRAM** (the L40s grading server) → **fp16** (~17 GB).
+- **smaller GPUs** → **4-bit NF4 quantization** via bitsandbytes (~6 GB), with double-quant and an fp16 compute dtype.
 
-A one-line `detect_backend()` (`platform.system() == "Darwin"` → MLX, else → CUDA) routes between two `load`/`generate` implementations that share the identical prompt, so a contributor on a Mac and a grader on an L40s run the same logic.
-
-NF4 ("NormalFloat-4") spaces its quantization levels to match the roughly-normal distribution of neural-network weights, so the 4× memory saving costs very little accuracy; the weights are *stored* in 4 bits but de-quantized on the fly for the actual matrix multiplies. This is a *storage* trick, which is why the quality hit is modest — and it's what lets the exact same pipeline develop on a laptop and run full-precision for grading.
+NF4 ("NormalFloat-4") spaces its quantization levels to match the roughly-normal distribution of neural-network weights, so the 4× memory saving costs very little accuracy; the weights are *stored* in 4 bits but de-quantized to fp16 on the fly for the actual matrix multiplies. This is a *storage* trick, which is why the quality hit is modest — and it's what let me develop the exact same pipeline on a small GPU and run it full-precision for grading.
 
 ### The prompt and the abstain hook
 
@@ -167,15 +162,13 @@ Anything the model can't answer cleanly collapses to `5` (skip, zero penalty); a
 
 > **A decision-theory footnote I like:** with four options and a −0.25 penalty, a *purely random* guess actually has positive expected value (`0.25·(+1) + 0.75·(−0.25) = +0.0625`). So "always abstain" is technically EV-suboptimal — the abstain is really a **risk/variance-reduction** choice that pays off when the model's wrong answers are *worse* than random (a confidently-wrong VLM often is) or when the penalty is steeper. The rigorous version would calibrate on the model's own confidence and abstain only below the break-even probability.
 
-### Proof it runs: a fully offline VLM on a laptop
+### Running it on Apple Silicon
 
-Because the backend auto-routes, the **same pipeline runs unchanged on a CUDA grading server, a Windows/Linux dev box, *and* an Apple-Silicon laptop** — and I can show the last one end-to-end. Below is the real run on my **M1 Pro (17 GB)**: no API key, no network, the 4-bit weights sitting on disk and the forward pass executing on the laptop's GPU cores via MLX. Same prompt, same weights as the CUDA path — only the engine differs.
+The graded pipeline targets CUDA, but I wanted to verify the VQA stage on my own machine (an M1 Pro, 17 GB) for this writeup. The bitsandbytes 4-bit path is CUDA-only and fp16 won't fit in 17 GB, so I ran the **same model and the same prompt through Apple's MLX runtime** (`mlx-community/Qwen2.5-VL-7B-Instruct-4bit`), which is built for Apple Silicon and fits comfortably in unified memory. Same weights, same question, different engine.
 
-![Offline inference log — Qwen2.5-VL-7B (4-bit) answering the sample questions on an Apple M1 Pro via MLX: the raw model output, ~17 s per question, ~2,965 image+text tokens encoded per call, 6.7 GB peak memory, 100% offline.](./images/geospatial-vqa/inference_log.png)
+On the three sample questions, the model **answered all three** — it didn't need the abstain — and the two answers I can verify against legible labels in the reconstruction are **correct**:
 
-This is the actual generated output, not a mock-up. Each question takes **~17 seconds**, during which the reconstructed map is encoded into **~2,965 vision tokens**, the model decodes its single answer token, and unified-memory usage peaks at **6.7 GB** — comfortably inside 17 GB. The model **answered all three** (it never reached for the abstain), and the two answers I can check against legible labels in the reconstruction are **correct**:
-
-![The three sample MCQs and the model's chosen answers, with the selected option highlighted.](./images/geospatial-vqa/questions_answers.png)
+![Qwen2.5-VL-7B answering the three sample MCQs about the reconstructed map.](./images/geospatial-vqa/questions_answers.png)
 
 - **"Which major water body is visible?" → Powai Lake.** Correct — it's the prominent labelled lake at the centre-right of the map.
 - **"Which dam is shown in the north?" → Vihar Lake Dam.** Correct — the reconstruction renders the *"Vihar Lake Dam"* label sharply at the top edge, and the model read it directly.
