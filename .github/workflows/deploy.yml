@@ -23,6 +23,8 @@ jobs:
         uses: withastro/action@v3
         with:
           node-version: 22
+        env:
+          PUBLIC_GOOGLE_SITE_VERIFICATION: 2VDfcknPoMzEUqg1xtiOCHkiV4Pu8rzFSZUQCAP3wXo
 
   deploy:
     needs: build
