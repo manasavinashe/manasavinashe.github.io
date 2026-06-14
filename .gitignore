@@ -26,3 +26,6 @@ pnpm-debug.log*
 # pagefind
 
 public/pagefind
+
+# private/unpublished project drafts (local-only, never published or pushed)
+private-projects/
