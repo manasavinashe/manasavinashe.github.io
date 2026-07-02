@@ -31,7 +31,7 @@ const projects = defineCollection({
     z.object({
       title: z.string(),
       description: z.string(),
-      category: z.enum(["finance", "computer-vision"]),
+      category: z.enum(["finance", "computer-vision", "machine-learning"]),
       pubDatetime: z.date(),
       github: z.string().optional(),
       demo: z.string().optional(),
